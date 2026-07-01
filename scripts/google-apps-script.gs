@@ -21,6 +21,14 @@ var DEFAULT_HEADERS = [
   "fbclid",
 ];
 
+// Reduz um cabeçalho como "data (formato XX/YY/ZZ)" para a chave "data",
+// para que textos extras no título da coluna não quebrem o mapeamento.
+function normalizeHeaderKey(header) {
+  var text = String(header).trim().toLowerCase();
+  var match = text.match(/^[a-z_]+/);
+  return match ? match[0] : text;
+}
+
 function doPost(e) {
   var sheet =
     SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME) ||
@@ -33,14 +41,14 @@ function doPost(e) {
   // Sempre lê o cabeçalho real da planilha (linha 1), em vez de presumir uma
   // ordem fixa de colunas — assim o script nunca desalinha dados mesmo que
   // alguém reordene ou adicione colunas manualmente na planilha.
-  var headers = sheet
-    .getRange(1, 1, 1, sheet.getLastColumn())
-    .getValues()[0];
+  var headerRow = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var keys = headerRow.map(normalizeHeaderKey);
 
-  var idCol = headers.indexOf("id");
+  var idCol = keys.indexOf("id");
   if (idCol === -1) {
     throw new Error('Cabeçalho "id" não encontrado na linha 1 da planilha.');
   }
+  var phoneCol = keys.indexOf("phone");
 
   var data = JSON.parse(e.postData.contents);
   var values = sheet.getDataRange().getValues();
@@ -59,19 +67,27 @@ function doPost(e) {
   var timeStr = Utilities.formatDate(now, tz, "HH:mm:ss");
 
   if (rowIndex === -1) {
-    var row = headers.map(function (h) {
-      if (h === "data") return dateStr;
-      if (h === "hora") return timeStr;
-      if (h === "qualificado") return "";
-      return data[h] || "";
+    var row = keys.map(function (k) {
+      if (k === "data") return dateStr;
+      if (k === "hora") return timeStr;
+      if (k === "qualificado") return "";
+      return data[k] || "";
     });
-    sheet.appendRow(row);
+    var newRowIndex = sheet.getLastRow() + 1;
+    sheet.getRange(newRowIndex, 1, 1, row.length).setValues([row]);
+    // Formata a coluna do telefone como texto puro para o Sheets nunca
+    // tentar interpretar o "+" inicial como início de fórmula/número.
+    if (phoneCol !== -1) {
+      sheet.getRange(newRowIndex, phoneCol + 1).setNumberFormat("@");
+    }
   } else {
-    headers.forEach(function (h, colIdx) {
+    keys.forEach(function (k, colIdx) {
       // nunca sobrescreve data/hora (mantém o primeiro toque) nem qualificado (preenchimento manual)
-      if (h === "data" || h === "hora" || h === "qualificado") return;
-      if (data[h] !== undefined && data[h] !== "") {
-        sheet.getRange(rowIndex, colIdx + 1).setValue(data[h]);
+      if (k === "data" || k === "hora" || k === "qualificado") return;
+      if (data[k] !== undefined && data[k] !== "") {
+        var cell = sheet.getRange(rowIndex, colIdx + 1);
+        if (colIdx === phoneCol) cell.setNumberFormat("@");
+        cell.setValue(data[k]);
       }
     });
   }
