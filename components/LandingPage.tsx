@@ -220,39 +220,6 @@ function ChapterBar({ n }: { n: string }) {
   );
 }
 
-// ── Header fixo ───────────────────────────────────────────────────────────────
-
-function StickyHeader({ onCTA }: { onCTA: () => void }) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () =>
-      setVisible(window.scrollY > window.innerHeight * 0.75);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <header
-      className={`fixed top-11 left-0 right-0 z-50 transition-transform duration-300 ${
-        visible ? "translate-y-0" : "-translate-y-full"
-      } bg-[#0D0D0D]/95 backdrop-blur-md border-b border-[#FF4D1C]/20`}
-    >
-      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-        <span className="font-[family-name:var(--font-bebas-neue)] text-2xl tracking-widest text-white whitespace-nowrap">
-          Guille <span className="text-[#FF4D1C]">Cardozo</span>
-        </span>
-        <button
-          onClick={onCTA}
-          className="bg-[#FF4D1C] text-white font-bold uppercase tracking-wider px-6 py-2.5 text-sm hover:bg-[#e63d0f] transition-all duration-200 font-[family-name:var(--font-inter)] cursor-pointer shadow-[0_0_20px_rgba(255,77,28,0.3)] whitespace-nowrap"
-        >
-          Quiero unirme →
-        </button>
-      </div>
-    </header>
-  );
-}
-
 // ── Seção 1 — Hero ────────────────────────────────────────────────────────────
 
 function HeroSection({ onCTA }: { onCTA: () => void }) {
@@ -1306,7 +1273,6 @@ export default function LandingPage() {
   return (
     <main className="bg-[#0D0D0D] text-white">
       <CountdownBar onCTA={open} />
-      <StickyHeader onCTA={open} />
       <HeroSection onCTA={open} />
       <TestimonialsSection onCTA={open} />
       <PainSection onCTA={open} />
