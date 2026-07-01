@@ -31,6 +31,17 @@ const EMPTY_UTM: UtmParams = {
   fbclid: "",
 };
 
+function formatWhatsapp(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, 15);
+  if (!digits) return "";
+  const groups = [digits.slice(0, 3)];
+  if (digits.length > 3) groups.push(digits.slice(3, 5));
+  if (digits.length > 5) groups.push(digits.slice(5, 8));
+  if (digits.length > 8) groups.push(digits.slice(8, 11));
+  if (digits.length > 11) groups.push(digits.slice(11, 15));
+  return "+" + groups.join(" ");
+}
+
 export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -94,8 +105,9 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
       setError("Por favor ingresá tu nombre.");
       return;
     }
-    if (!whatsapp.trim()) {
-      setError("Por favor ingresá tu WhatsApp.");
+    const whatsappDigits = whatsapp.replace(/\D/g, "");
+    if (whatsappDigits.length < 8) {
+      setError("Por favor ingresá un WhatsApp válido, con código de país.");
       return;
     }
 
@@ -185,8 +197,9 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
               </label>
               <input
                 type="tel"
+                inputMode="numeric"
                 value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
+                onChange={(e) => setWhatsapp(formatWhatsapp(e.target.value))}
                 onBlur={(e) => sendPartial("phone", e.target.value)}
                 placeholder="+598 99 000 000"
                 className="bg-[#1A1A1A] border border-white/10 text-white placeholder-[#555555] px-4 py-3 focus:outline-none focus:border-[#FF4D1C] transition-colors font-[family-name:var(--font-inter)]"
