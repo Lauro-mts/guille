@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LeadModal from "./LeadModal";
 
 // ── Editar antes de publicar ──────────────────────────────────────────────────
-const SALARY_PLACEHOLDER = "$X";
-const DATE_PLACEHOLDER = "DD/MM";
-const URGENCY_FILLED = 17;
-const URGENCY_TOTAL = 30;
+const SALARY_PLACEHOLDER = "$500";
+const DATE_PLACEHOLDER = "14/07";
 // TODO: substituir pela data real de abertura da oferta (UTC-3 = Montevideo)
 const PROMO_DATE = new Date("2026-07-15T20:00:00-03:00");
 
@@ -259,19 +257,40 @@ function StickyHeader({ onCTA }: { onCTA: () => void }) {
 
 function HeroSection({ onCTA }: { onCTA: () => void }) {
   return (
-    // h-screen + pt-11 compensa a barra fixa de countdown no topo (44px)
-    <section className="relative h-screen pt-11 flex flex-col justify-center items-center text-center px-6 bg-[#0D0D0D] overflow-hidden">
-      {/* Glow de fundo */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-[#FF4D1C]/8 rounded-full blur-[140px] pointer-events-none" />
+    <section className="relative min-h-[100svh] md:pt-11 flex flex-col md:justify-center items-center bg-[#0D0D0D]">
+
+      {/* Camada de imagem — overflow-hidden aqui para não cortar conteúdo */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Mobile: 9:16, expert no topo */}
+        <div
+          className="absolute inset-0 md:hidden bg-cover"
+          style={{ backgroundImage: "url('/heromobile.png.png')", backgroundPosition: "center top" }}
+        />
+        {/* Desktop: 16:9, expert à direita */}
+        <div
+          className="absolute inset-0 hidden md:block bg-cover"
+          style={{ backgroundImage: "url('/herodesktop.png')", backgroundPosition: "center center" }}
+        />
+      </div>
+
+      {/* Overlays mobile */}
+      <div className="absolute inset-0 md:hidden bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/80 to-[#0D0D0D]/10 pointer-events-none" />
+      <div
+        className="absolute inset-0 md:hidden pointer-events-none"
+        style={{ background: "linear-gradient(to right, rgba(13,13,13,0.5) 0%, transparent 28%, transparent 72%, rgba(13,13,13,0.5) 100%)" }}
+      />
+
+      {/* Overlay desktop — gradiente da esquerda */}
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-[#0D0D0D] via-[#0D0D0D]/80 to-transparent pointer-events-none" />
 
       <Watermark n="01" />
 
-      {/* Label */}
-      <div className="relative z-10 flex flex-col items-center">
+      {/* Conteúdo */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center md:items-start text-center md:text-left pt-[32svh] min-[380px]:pt-[38svh] md:pt-0 pb-8 md:pb-0">
+
         <Label>Curso de Bartender — Guille Cardozo | Punta del Este</Label>
 
-        {/* Headline — escala por altura do viewport (vh) para garantir fit */}
-        <h1 className="mt-3 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.4rem,9vh,9rem)] leading-[0.88] tracking-wide max-w-5xl">
+        <h1 className="mt-3 font-[family-name:var(--font-bebas-neue)] text-[clamp(42px,13vw,64px)] md:text-[clamp(2.4rem,9vh,9rem)] leading-[0.9] md:leading-[0.88] tracking-wide max-w-5xl">
           <span
             className="block text-transparent"
             style={{ WebkitTextStroke: "clamp(1px, 0.15vh, 2px) #FF4D1C" }}
@@ -283,8 +302,8 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
           <span className="block text-white">Una vida de historias.</span>
         </h1>
 
-        {/* Divisor laranja */}
-        <div className="mt-[clamp(0.75rem,2vh,2.5rem)] flex items-center gap-4 w-full max-w-sm">
+        {/* Divisor */}
+        <div className="mt-4 md:mt-[clamp(0.75rem,2vh,2.5rem)] flex items-center gap-4 w-full max-w-sm">
           <div className="flex-1 h-px bg-[#FF4D1C]/50" />
           <span className="text-[#FF4D1C] text-[10px] font-bold tracking-[0.35em] font-[family-name:var(--font-inter)] uppercase">
             Grupo exclusivo
@@ -293,7 +312,7 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
         </div>
 
         {/* Subtítulo */}
-        <p className="mt-[clamp(0.75rem,2vh,1.75rem)] text-[#999999] text-[clamp(0.85rem,1.8vh,1.1rem)] max-w-lg font-[family-name:var(--font-inter)] leading-relaxed">
+        <p className="mt-3 md:mt-[clamp(0.75rem,2vh,1.75rem)] text-[#999999] text-[clamp(0.85rem,3.5vw,1rem)] md:text-[clamp(0.85rem,1.8vh,1.1rem)] max-w-lg font-[family-name:var(--font-inter)] leading-relaxed">
           Únete al grupo. El día{" "}
           <span className="text-white font-semibold">
             <PH>{DATE_PLACEHOLDER}</PH>
@@ -302,13 +321,16 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
           quienes llegaron primero.
         </p>
 
-        <div className="mt-[clamp(1rem,2.5vh,2.5rem)]">
-          <CTAButton onClick={onCTA}>Quiero unirme al grupo →</CTAButton>
+        {/* CTA — full-width no mobile */}
+        <div className="mt-5 md:mt-[clamp(1rem,2.5vh,2.5rem)] w-full max-w-[448px] md:w-auto">
+          <CTAButton onClick={onCTA} className="w-full md:w-auto">
+            Quiero unirme al grupo →
+          </CTAButton>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-[#333333]">
+      {/* Scroll indicator — só desktop */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1.5 text-[#333333]">
         <span className="text-[9px] font-[family-name:var(--font-inter)] uppercase tracking-[0.4em]">
           Scroll
         </span>
@@ -320,132 +342,197 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
   );
 }
 
-// ── Barra de urgência ─────────────────────────────────────────────────────────
-
-function UrgencyBar({ onCTA }: { onCTA: () => void }) {
-  const pct = Math.round((URGENCY_FILLED / URGENCY_TOTAL) * 100);
-
-  return (
-    <section className="bg-[#111111] border-y border-[#FF4D1C]/15 px-6 py-8">
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-10">
-        <div className="flex-1 w-full">
-          <div className="flex items-baseline justify-between mb-2.5">
-            <p className="font-[family-name:var(--font-bebas-neue)] text-white tracking-wide text-xl">
-              <span className="text-[#FF4D1C]">{URGENCY_FILLED}</span> de{" "}
-              {URGENCY_TOTAL} vagas no grupo preenchidas
-            </p>
-            <span className="text-[#FF4D1C] font-bold font-[family-name:var(--font-inter)] text-sm">
-              {pct}%
-            </span>
-          </div>
-          <div className="w-full h-1.5 bg-[#222222]">
-            <div
-              className="h-full bg-[#FF4D1C] shadow-[0_0_10px_rgba(255,77,28,0.7)] transition-all duration-1000"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <p className="mt-2 text-[#555555] text-xs font-[family-name:var(--font-inter)] uppercase tracking-wider">
-            {URGENCY_TOTAL - URGENCY_FILLED} lugares restantes
-          </p>
-        </div>
-        <button
-          onClick={onCTA}
-          className="whitespace-nowrap border border-[#FF4D1C] text-[#FF4D1C] font-bold uppercase tracking-wider px-7 py-3 text-sm hover:bg-[#FF4D1C] hover:text-white transition-all duration-200 font-[family-name:var(--font-inter)] cursor-pointer"
-        >
-          Asegurar mi lugar →
-        </button>
-      </div>
-    </section>
-  );
-}
-
-// ── Seção 2 — Dor e Oportunidade ──────────────────────────────────────────────
+// ── Seção 3 — Dor e Oportunidade ──────────────────────────────────────────────
 
 function PainSection({ onCTA }: { onCTA: () => void }) {
   return (
     <section className="relative bg-[#0D0D0D] px-6 py-24 overflow-hidden">
-      <Watermark n="02" />
+      <Watermark n="03" />
 
-      <div className="relative z-10 max-w-3xl mx-auto">
-        <ChapterBar n="02" />
-        <Label>El problema</Label>
+      <div className="relative z-10 max-w-6xl mx-auto">
 
-        <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight text-white tracking-wide">
-          Trabajás en eventos. A fin de mes la cuenta sigue apretada.
-        </h2>
+        {/* Grid: texto esquerda / imagem direita no desktop */}
+        <div className="grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:items-center">
 
-        <div className="mt-10 space-y-5 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
-          <p>
-            Mientras tanto, hay gente usando el bar como pasaje al mundo —
-            trabajando en cruceros, en resorts, en otros países — y vos te
-            preguntás:
-          </p>
+          {/* Coluna de texto */}
+          <div>
+            <ChapterBar n="03" />
+            <Label>El problema</Label>
 
-          <blockquote className="text-white text-xl md:text-2xl font-semibold border-l-4 border-[#FF4D1C] pl-6 py-2">
-            &ldquo;¿Será que esto es para mí? ¿Vale la pena invertir mi tiempo
-            y dinero en esto?&rdquo;
-          </blockquote>
+            <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight text-white tracking-wide">
+              Trabajás en eventos. A fin de mes la cuenta sigue apretada.
+            </h2>
 
-          <p>
-            Esa duda tiene sentido. Ya viste promesas que no se cumplieron. Ya
-            intentaste aprender solo. Ya pensaste en hacer un curso pero algo
-            siempre lo impidió — el dinero, el tiempo, el miedo a que no valga
-            la pena.
-          </p>
+            <div className="mt-10 space-y-5 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
+              <p>
+                Mientras tanto, hay gente usando el bar como pasaje al mundo —
+                trabajando en cruceros, en resorts, en otros países — y vos te
+                preguntás:
+              </p>
+
+              <blockquote className="text-white text-xl md:text-2xl font-semibold border-l-4 border-[#FF4D1C] pl-6 py-2">
+                &ldquo;¿Será que esto es para mí? ¿Vale la pena invertir mi
+                tiempo y dinero en esto?&rdquo;
+              </blockquote>
+
+              <p>
+                Esa duda tiene sentido. Ya viste promesas que no se cumplieron.
+                Ya intentaste aprender solo. Ya pensaste en hacer un curso pero
+                algo siempre lo impidió — el dinero, el tiempo, el miedo a que
+                no valga la pena.
+              </p>
+            </div>
+          </div>
+
+          {/* Coluna de imagem */}
+          <div className="mt-12 lg:mt-0">
+            {/* Desktop */}
+            <div className="relative hidden overflow-hidden border border-white/10 bg-black lg:block">
+              <img
+                src="/secao2desktop.png"
+                alt="Jovem pensativo em um bar, representando dúvida e estagnação profissional"
+                loading="lazy"
+                className="h-[460px] w-full object-cover object-center"
+                style={{ filter: "brightness(0.88) saturate(0.85)" }}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-black/20" />
+            </div>
+
+            {/* Mobile — abaixo de todo o texto */}
+            <div className="relative overflow-hidden border border-white/10 bg-black lg:hidden">
+              <img
+                src="/secao2mobile.png"
+                alt="Jovem pensativo em um bar, representando dúvida e estagnação profissional"
+                loading="lazy"
+                className="h-[360px] w-full object-cover object-center"
+                style={{ filter: "brightness(0.88) saturate(0.85)" }}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-black/20" />
+            </div>
+          </div>
         </div>
 
-        {/* Virada */}
-        <div className="mt-20">
-          <Label>La oportunidad real</Label>
+        {/* Virada — oportunidade com grid editorial */}
+        <div className="mt-20 grid gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-center">
 
-          <h3 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2rem,5vw,4rem)] leading-tight tracking-wide">
-            <span className="text-[#FF4D1C]">Bartender profesional</span>
-            <br />
-            <span className="text-white">no es un trabajo cualquiera.</span>
-            <br />
-            <span
-              className="text-transparent"
-              style={{ WebkitTextStroke: "2px #FFFFFF" }}
-            >
-              Es una profesión global.
-            </span>
-          </h3>
+          {/* Texto */}
+          <div>
+            <Label>La oportunidad real</Label>
 
-          <p className="mt-6 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
-            No importa el país, no importa el idioma — quien sabe trabajar
-            detrás de una barra tiene lugar garantizado. En Punta del Este en
-            temporada. En Miami. En cruceros. En cualquier lugar.
-          </p>
+            <h3 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2rem,5vw,4rem)] leading-tight tracking-wide">
+              <span className="text-[#FF4D1C]">Bartender profesional</span>
+              <br />
+              <span className="text-white">no es un trabajo cualquiera.</span>
+              <br />
+              <span
+                className="text-transparent"
+                style={{ WebkitTextStroke: "2px #FFFFFF" }}
+              >
+                Es una profesión global.
+              </span>
+            </h3>
 
-          <p className="mt-4 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
-            La diferencia entre quien se queda y quien se va no es talento.{" "}
-            <span className="text-white font-semibold">
-              Es haber aprendido de la manera correcta
-            </span>{" "}
-            — con método, con postura, y con alguien que ya vivió todo esto en
-            carne propia.
-          </p>
+            <p className="mt-6 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
+              No importa el país, no importa el idioma — quien sabe trabajar
+              detrás de una barra tiene lugar garantizado. En Punta del Este en
+              temporada. En Miami. En cruceros. En cualquier lugar.
+            </p>
+
+            <p className="mt-4 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
+              La diferencia entre quien se queda y quien se va no es talento.{" "}
+              <span className="text-white font-semibold">
+                Es haber aprendido de la manera correcta
+              </span>{" "}
+              — con método, con postura, y con alguien que ya vivió todo esto en
+              carne propia.
+            </p>
+
+            {/* Ponte — fica junto ao texto no desktop */}
+            <div className="mt-10 border-l-4 border-[#FF4D1C] bg-[#111111] p-8">
+              <p className="text-white text-lg font-[family-name:var(--font-inter)] leading-relaxed">
+                Guille salió de Montevideo con una coctelera y llegó a Miami.
+              </p>
+              <p className="mt-2 text-white text-xl font-bold font-[family-name:var(--font-inter)]">
+                No por suerte. Por método.
+              </p>
+              <p className="mt-4 text-[#999999] font-[family-name:var(--font-inter)]">
+                Y ahora está abriendo ese camino para quienes viven acá en Punta
+                del Este y quieren lo mismo.
+              </p>
+              <p className="mt-4 text-[#FF4D1C] italic font-[family-name:var(--font-inter)]">
+                &ldquo;Una profesión que podés usar donde y cuando necesites — y
+                que ninguna crisis te puede quitar.&rdquo;
+              </p>
+            </div>
+          </div>
+
+          {/* Mosaico de imagens */}
+          <div className="grid grid-cols-2 gap-3">
+
+            {/* Miami — imagem principal, largura total */}
+            <div className="relative col-span-2 overflow-hidden border border-white/10 bg-black">
+              <img
+                src="/opportunity-miami.webp"
+                alt="Guille trabalhando como bartender em Miami"
+                loading="lazy"
+                className="h-[320px] w-full object-cover object-top saturate-[0.8] contrast-[1.08]"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-black/25" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/75 to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#FF4D1C] font-[family-name:var(--font-inter)]">
+                  Miami
+                </p>
+                <p className="mt-0.5 text-xs font-bold uppercase tracking-[0.18em] text-white/80 font-[family-name:var(--font-inter)]">
+                  Bar Service
+                </p>
+              </div>
+            </div>
+
+            {/* Cruzeiro França */}
+            <div className="relative overflow-hidden border border-white/10 bg-black">
+              <img
+                src="/opportunity-cruise-france.webp"
+                alt="Guille em cruzeiro na França"
+                loading="lazy"
+                className="h-[210px] w-full object-cover object-top saturate-[0.75] contrast-[1.08]"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-black/35" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/75 to-transparent" />
+              <div className="absolute bottom-3 left-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#FF4D1C] font-[family-name:var(--font-inter)]">
+                  Crucero
+                </p>
+                <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/75 font-[family-name:var(--font-inter)]">
+                  France 2008
+                </p>
+              </div>
+            </div>
+
+            {/* Equipe profissional */}
+            <div className="relative overflow-hidden border border-white/10 bg-black">
+              <img
+                src="/opportunity-elite-team.webp"
+                alt="Guille em ambiente profissional com equipe de bar"
+                loading="lazy"
+                className="h-[210px] w-full object-cover object-top saturate-[0.75] contrast-[1.08]"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-black/35" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/75 to-transparent" />
+              <div className="absolute bottom-3 left-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#FF4D1C] font-[family-name:var(--font-inter)]">
+                  Trayectoria
+                </p>
+                <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/75 font-[family-name:var(--font-inter)]">
+                  Equipo profesional
+                </p>
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        {/* Ponte */}
-        <div className="mt-14 border-l-4 border-[#FF4D1C] bg-[#111111] p-8">
-          <p className="text-white text-lg font-[family-name:var(--font-inter)] leading-relaxed">
-            Guille salió de Montevideo con una coctelera y llegó a Miami.
-          </p>
-          <p className="mt-2 text-white text-xl font-bold font-[family-name:var(--font-inter)]">
-            No por suerte. Por método.
-          </p>
-          <p className="mt-4 text-[#999999] font-[family-name:var(--font-inter)]">
-            Y ahora está abriendo ese camino para quienes viven acá en Punta
-            del Este y quieren lo mismo.
-          </p>
-          <p className="mt-4 text-[#FF4D1C] italic font-[family-name:var(--font-inter)]">
-            &ldquo;Una profesión que podés usar donde y cuando necesites — y
-            que ninguna crisis te puede quitar.&rdquo;
-          </p>
-        </div>
-
-        <div className="mt-12 flex justify-center">
+        <div className="mt-14 flex justify-center">
           <CTAButton onClick={onCTA}>
             Quiero aprender de la manera correcta →
           </CTAButton>
@@ -455,40 +542,102 @@ function PainSection({ onCTA }: { onCTA: () => void }) {
   );
 }
 
-// ── Seção 3 — Quem é Guille ───────────────────────────────────────────────────
+// ── Seção 4 — Quem é Guille ───────────────────────────────────────────────────
+
+// Card de imagem reutilizável com overlay + label
+function InstructorPhoto({
+  src,
+  alt,
+  label,
+  sublabel,
+  className = "",
+  imgClassName = "",
+}: {
+  src: string;
+  alt: string;
+  label: string;
+  sublabel?: string;
+  className?: string;
+  imgClassName?: string;
+}) {
+  return (
+    <div className={`relative overflow-hidden border border-white/10 bg-black ${className}`}>
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className={`w-full object-cover object-top saturate-[0.85] contrast-[1.08] ${imgClassName}`}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-black/25" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/80 to-transparent" />
+      <div className="absolute bottom-3 left-3">
+        <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#FF4D1C] font-[family-name:var(--font-inter)]">
+          {label}
+        </p>
+        {sublabel && (
+          <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/70 font-[family-name:var(--font-inter)]">
+            {sublabel}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function AboutSection({ onCTA }: { onCTA: () => void }) {
   return (
     <section className="relative bg-[#111111] px-6 py-24 overflow-hidden">
-      <Watermark n="03" />
+      <Watermark n="04" />
 
-      <div className="relative z-10 max-w-5xl mx-auto">
-        <ChapterBar n="03" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <ChapterBar n="04" />
         <Label>El instructor</Label>
         <h2 className="mt-2 font-[family-name:var(--font-bebas-neue)] text-[#666666] text-3xl tracking-wide">
           ¿Quién te va a enseñar esto?
         </h2>
 
-        <div className="mt-12 grid md:grid-cols-2 gap-12 items-start">
-          {/* Fotos placeholders */}
-          <div className="flex flex-col gap-4">
-            <PhotoPlaceholder
-              label="Foto principal — Guille Cardozo"
-              className="aspect-[4/5]"
+        {/* Imagem principal — mobile only, aparece entre intro e bio */}
+        <div className="mt-8 lg:hidden">
+          <InstructorPhoto
+            src="/images/instructor-main.webp"
+            alt="Guille Cardozo — retrato de autoridade, braços cruzados"
+            label="Guille Cardozo"
+            sublabel="Instructor"
+            imgClassName="h-[340px]"
+          />
+        </div>
+
+        {/* Grid: mosaico esquerda / bio direita */}
+        <div className="mt-10 grid lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-14">
+
+          {/* Coluna de imagens — desktop: estica para igualar altura da bio */}
+          <div className="hidden lg:flex lg:self-stretch flex-col gap-3">
+            <InstructorPhoto
+              src="/images/instructor-main.webp"
+              alt="Guille Cardozo — retrato de autoridade, braços cruzados"
+              label="Guille Cardozo"
+              sublabel="Instructor"
+              className="flex-1 min-h-[300px]"
+              imgClassName="h-full"
             />
-            <div className="grid grid-cols-2 gap-4">
-              <PhotoPlaceholder
-                label="Foto ambientada — bar / coqueteleira"
-                className="aspect-square"
+            <div className="grid grid-cols-2 gap-3">
+              <InstructorPhoto
+                src="/images/instructor-bar.webp"
+                alt="Guille trabalhando em bar profissional com garrafas ao fundo"
+                label="Bar / Coctelería"
+                imgClassName="h-[190px]"
               />
-              <PhotoPlaceholder
-                label="Foto exterior — Miami / cruceiro"
-                className="aspect-square"
+              <InstructorPhoto
+                src="/images/instructor-miami-selfie.webp"
+                alt="Guille em rooftop de Miami com coqueteleira"
+                label="Miami"
+                sublabel="Trayectoria real"
+                imgClassName="h-[190px]"
               />
             </div>
           </div>
 
-          {/* Conteúdo */}
+          {/* Bio */}
           <div>
             <h3 className="font-[family-name:var(--font-bebas-neue)] text-[clamp(3rem,6vw,5.5rem)] leading-none tracking-wide">
               <span className="text-white">Guille</span>
@@ -535,6 +684,23 @@ function AboutSection({ onCTA }: { onCTA: () => void }) {
               ))}
             </ul>
 
+            {/* Duas imagens menores — mobile only, abaixo da bio */}
+            <div className="mt-8 grid grid-cols-2 gap-3 lg:hidden">
+              <InstructorPhoto
+                src="/images/instructor-bar.webp"
+                alt="Guille trabalhando em bar profissional com garrafas ao fundo"
+                label="Bar / Coctelería"
+                imgClassName="h-[160px]"
+              />
+              <InstructorPhoto
+                src="/images/instructor-miami-selfie.webp"
+                alt="Guille em rooftop de Miami com coqueteleira"
+                label="Miami"
+                sublabel="Trayectoria real"
+                imgClassName="h-[160px]"
+              />
+            </div>
+
             <div className="mt-10">
               <CTAButton onClick={onCTA}>
                 Quiero aprender con Guille →
@@ -547,7 +713,7 @@ function AboutSection({ onCTA }: { onCTA: () => void }) {
   );
 }
 
-// ── Seção 4 — O que vai aprender ──────────────────────────────────────────────
+// ── Seção 5 — O que vai aprender ──────────────────────────────────────────────
 
 function CurriculumSection({ onCTA }: { onCTA: () => void }) {
   const pillars = [
@@ -575,10 +741,10 @@ function CurriculumSection({ onCTA }: { onCTA: () => void }) {
 
   return (
     <section className="relative bg-[#0D0D0D] px-6 py-24 overflow-hidden">
-      <Watermark n="04" />
+      <Watermark n="05" />
 
       <div className="relative z-10 max-w-5xl mx-auto">
-        <ChapterBar n="04" />
+        <ChapterBar n="05" />
         <Label>El programa</Label>
 
         <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(3rem,8vw,7rem)] leading-none tracking-wide">
@@ -587,11 +753,6 @@ function CurriculumSection({ onCTA }: { onCTA: () => void }) {
           <span className="text-[#FF4D1C]">el curso</span>
         </h2>
 
-        {/* Vídeo placeholder */}
-        <VideoPlaceholder
-          label="Vídeo de presentación del programa — reemplazar con embed de YouTube / Vimeo"
-          className="mt-10 aspect-video"
-        />
 
         {/* Pilares */}
         <div className="mt-16 grid md:grid-cols-2 gap-px bg-white/5">
@@ -654,7 +815,7 @@ function CurriculumSection({ onCTA }: { onCTA: () => void }) {
   );
 }
 
-// ── Seção 5 — Para quem é ─────────────────────────────────────────────────────
+// ── Seção 7 — Para quem é ─────────────────────────────────────────────────────
 
 function ForWhoSection({ onCTA }: { onCTA: () => void }) {
   const yesItems = [
@@ -672,10 +833,10 @@ function ForWhoSection({ onCTA }: { onCTA: () => void }) {
 
   return (
     <section className="relative bg-[#111111] px-6 py-24 overflow-hidden">
-      <Watermark n="05" />
+      <Watermark n="07" />
 
       <div className="relative z-10 max-w-5xl mx-auto">
-        <ChapterBar n="05" />
+        <ChapterBar n="07" />
         <Label>Para quién es</Label>
 
         <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight tracking-wide">
@@ -746,92 +907,346 @@ function ForWhoSection({ onCTA }: { onCTA: () => void }) {
   );
 }
 
-// ── Seção 6 — Depoimentos ─────────────────────────────────────────────────────
+// ── Seção 2 — Depoimentos em vídeo ───────────────────────────────────────────
 
-const TESTIMONIALS = [
+const VIDEO_TESTIMONIALS = [
   {
-    name: "Nombre Apellido",
-    city: "Montevideo",
-    quote:
-      "Texto do depoimento — uma frase curta e direta sobre o que o curso mudou. Substituir por depoimento real.",
+    ytId: "HDNd8j3sdiY",
+    name: "",
+    city: "",
+    role: "",
+    quote: "",
   },
   {
-    name: "Nombre Apellido",
-    city: "Punta del Este",
-    quote:
-      "Segundo depoimento — concreto, com resultado específico mencionado. Substituir por depoimento real.",
+    ytId: "uYz4Q7RreJ8",
+    name: "",
+    city: "",
+    role: "",
+    quote: "",
   },
   {
-    name: "Nombre Apellido",
-    city: "Buenos Aires",
-    quote:
-      "Terceiro depoimento — idealmente de alguém que conseguiu trabalho no exterior. Substituir por depoimento real.",
+    ytId: "wus3yCmY4Bk",
+    name: "",
+    city: "",
+    role: "",
+    quote: "",
   },
 ];
 
-function TestimonialsSection() {
+function VideoTestimonial({
+  ytId,
+  name,
+  city,
+  role,
+  quote,
+}: (typeof VIDEO_TESTIMONIALS)[0]) {
+  const [playing, setPlaying] = useState(false);
+
   return (
-    <section className="relative bg-[#0D0D0D] px-6 py-24 overflow-hidden">
-      <Watermark n="06" />
+    <div className="flex flex-col bg-[#100E0C] border border-white/5 hover:border-[#FF4D1C]/25 transition-colors duration-300">
+      {/* Área de vídeo */}
+      <div
+        className="relative aspect-[9/16] overflow-hidden cursor-pointer group"
+        onClick={() => !playing && setPlaying(true)}
+      >
+        {!playing ? (
+          <>
+            {/* Thumbnail do YouTube — hqdefault é o formato disponível para Shorts */}
+            <img
+              src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+              alt={`Depoimento de ${name}`}
+              className="w-full h-full object-cover saturate-[0.65] contrast-[1.08] group-hover:scale-[1.03] transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors duration-300" />
 
-      <div className="relative z-10 max-w-5xl mx-auto">
-        <ChapterBar n="06" />
-        <Label>Lo que dicen</Label>
-
-        <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight tracking-wide">
-          Resultados{" "}
-          <span className="text-[#FF4D1C]">reales.</span>
-        </h2>
-
-        <div className="mt-12 grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, i) => (
-            <div
-              key={i}
-              className="bg-[#111111] border border-white/5 p-6 flex flex-col gap-5 hover:border-[#FF4D1C]/20 transition-colors"
-            >
-              {/* Cabeçalho do card */}
-              <div className="flex items-center gap-4">
-                <PhotoPlaceholder
-                  label={`Foto — ${t.name}`}
-                  className="w-12 h-12 rounded-full flex-shrink-0"
-                />
-                <div>
-                  <p className="text-white font-bold font-[family-name:var(--font-inter)] text-sm">
-                    {t.name}
-                  </p>
-                  <p className="text-[#FF4D1C] text-xs font-[family-name:var(--font-inter)] uppercase tracking-wider">
-                    {t.city}
-                  </p>
-                </div>
+            {/* Play button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[60px] h-[60px] bg-[#FF4D1C] flex items-center justify-center shadow-[0_0_40px_rgba(255,77,28,0.45)] group-hover:scale-110 group-hover:shadow-[0_0_60px_rgba(255,77,28,0.7)] transition-all duration-200">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <polygon points="6 3 20 12 6 21 6 3" />
+                </svg>
               </div>
+            </div>
 
-              {/* Aspas decorativas */}
-              <span className="font-[family-name:var(--font-bebas-neue)] text-5xl text-[#FF4D1C]/20 leading-none -mb-3">
+            {/* Label inferior */}
+            {role && (
+              <div className="absolute bottom-3 left-3 pointer-events-none">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#FF4D1C] font-[family-name:var(--font-inter)]">
+                  {role}
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* controls=0 remove toda a UI do YouTube — título, canal, barra, logo */}
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&controls=0&modestbranding=1&iv_load_policy=3&loop=1&playlist=${ytId}`}
+              className="absolute inset-0 w-full h-full"
+              allow="autoplay; encrypted-media; fullscreen"
+              allowFullScreen
+            />
+          </>
+        )}
+      </div>
+
+      {/* Citação + identidade — só renderiza se tiver conteúdo */}
+      {(quote || name) && (
+        <div className="p-5 flex flex-col gap-3 flex-1">
+          {quote && (
+            <>
+              <span className="font-[family-name:var(--font-bebas-neue)] text-4xl text-[#FF4D1C]/20 leading-none -mb-1 select-none">
                 &ldquo;
               </span>
-
-              <p className="text-[#999999] font-[family-name:var(--font-inter)] italic leading-relaxed text-sm flex-1">
-                {t.quote}
+              <p className="text-[#888888] font-[family-name:var(--font-inter)] italic leading-relaxed text-sm flex-1">
+                {quote}
               </p>
+            </>
+          )}
+          {name && (
+            <div className="border-t border-white/5 pt-4 mt-1">
+              <p className="text-white font-bold font-[family-name:var(--font-inter)] text-sm">
+                {name}
+              </p>
+              {city && (
+                <p className="mt-0.5 text-[#FF4D1C] text-[10px] font-[family-name:var(--font-inter)] uppercase tracking-[0.22em]">
+                  {city}
+                </p>
+              )}
             </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TestimonialsSection({ onCTA }: { onCTA: () => void }) {
+  return (
+    <section
+      className="relative px-6 py-24 overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(ellipse at 50% 30%, #1C1208 0%, #0E0C0A 55%, #0B0B0B 100%)",
+      }}
+    >
+      <Watermark n="02" />
+
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <ChapterBar n="02" />
+        <Label>Lo que dicen</Label>
+
+        <div className="mt-4 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <h2 className="font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight tracking-wide">
+            Resultados <span className="text-[#FF4D1C]">reales.</span>
+          </h2>
+          <p className="text-[#444444] text-sm font-[family-name:var(--font-inter)] md:text-right max-w-xs">
+            Personas reales. Sin edición.
+          </p>
+        </div>
+
+        <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {VIDEO_TESTIMONIALS.map((t) => (
+            <VideoTestimonial key={t.ytId} {...t} />
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <CTAButton onClick={onCTA}>Quiero unirme al grupo →</CTAButton>
         </div>
       </div>
     </section>
   );
 }
 
-// ── Seção 7 — CTA Final ───────────────────────────────────────────────────────
+// ── Seção 6 — Provas sociais do Google ───────────────────────────────────────
+
+const GOOGLE_RATING = {
+  business: "Taller de Coctelería – Punta del Este",
+  score: "5,0",
+  reviews: 47,
+};
+
+const FEATURED_GOOGLE_REVIEWS = [
+  { src: "/images/imagesgoogle/google-review-simon-cedres.png", name: "Simón Cedrés" },
+  { src: "/images/imagesgoogle/google-review-mariana-amaral.png", name: "Mariana Amaral" },
+  { src: "/images/imagesgoogle/google-review-mili.png", name: "Mili" },
+  { src: "/images/imagesgoogle/google-review-paula-kim.png", name: "Paula Kim" },
+  { src: "/images/imagesgoogle/google-review-maizza-piriz.png", name: "Maizza Piriz" },
+];
+
+const MORE_GOOGLE_REVIEWS = [
+  { src: "/images/imagesgoogle/google-review-kiara-cotto.png", name: "Kiara Cotto" },
+  { src: "/images/imagesgoogle/google-review-marcos-rodriguez.png", name: "Marcos Rodríguez" },
+  { src: "/images/imagesgoogle/google-review-claudia-larrea.png", name: "Claudia Larrea" },
+  { src: "/images/imagesgoogle/google-review-estefani-rodriguez.png", name: "Estefani Rodríguez" },
+  { src: "/images/imagesgoogle/google-review-leo-gomez.png", name: "Leo Gómez" },
+  { src: "/images/imagesgoogle/google-review-nicole-ferreira.png", name: "Nicole Ferreira" },
+  { src: "/images/imagesgoogle/google-review-arturo-dos-santos.png", name: "Arturo Dos Santos" },
+  { src: "/images/imagesgoogle/google-review-gregory-diaz.png", name: "Gregory Díaz" },
+];
+
+function GoogleLogo({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48">
+      <path
+        fill="#FFC107"
+        d="M43.6 20.5H42V20.4H24v7.2h11.3c-1.6 4.7-6.1 8.1-11.3 8.1-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.1-5.1C33.7 6.5 29.1 4.7 24 4.7 13.4 4.7 4.8 13.3 4.8 23.9s8.6 19.2 19.2 19.2c9.6 0 18.4-7 18.4-19.2 0-1.2-.1-2.3-.4-3.4z"
+      />
+      <path
+        fill="#FF3D00"
+        d="m6.6 14.7 6 4.4C14.3 15.4 18.8 12.7 24 12.7c3.1 0 5.8 1.1 8 3l5.1-5.1C33.7 6.5 29.1 4.7 24 4.7c-7.4 0-13.9 4.2-17.4 10z"
+      />
+      <path
+        fill="#4CAF50"
+        d="M24 43.1c5 0 9.6-1.9 13-5.2l-6-4.9c-1.9 1.4-4.3 2.2-7 2.2-5.2 0-9.6-3.4-11.2-8.1l-6 4.6c3.4 6.8 10.4 11.4 17.2 11.4z"
+      />
+      <path
+        fill="#1976D2"
+        d="M43.6 20.5H42V20.4H24v7.2h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6 4.9c-.4.4 6.4-4.7 6.4-14.3 0-1.2-.1-2.3-.4-3.3z"
+      />
+    </svg>
+  );
+}
+
+function GoogleRatingBadge() {
+  return (
+    <div className="flex flex-col sm:flex-row items-start gap-6">
+      <div className="inline-flex items-center gap-4 bg-[#100E0C] border border-white/10 px-6 py-4">
+        <GoogleLogo />
+        <div>
+          <p className="text-white text-sm font-bold font-[family-name:var(--font-inter)] leading-tight">
+            {GOOGLE_RATING.business}
+          </p>
+          <div className="mt-1.5 flex items-baseline gap-2">
+            <span className="font-[family-name:var(--font-bebas-neue)] text-3xl text-white leading-none">
+              {GOOGLE_RATING.score}
+            </span>
+            <span className="text-[#FBBC05] text-base leading-none tracking-tight">
+              ★★★★★
+            </span>
+          </div>
+          <p className="mt-1 text-[#999999] text-xs font-[family-name:var(--font-inter)] uppercase tracking-[0.2em]">
+            {GOOGLE_RATING.reviews} avaliações no Google
+          </p>
+        </div>
+      </div>
+
+      <img
+        src="/images/imagesgoogle/google-rating-overview-reference.png"
+        alt={`${GOOGLE_RATING.business} — perfil no Google`}
+        className="w-[220px] sm:w-[240px] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+      />
+    </div>
+  );
+}
+
+function GoogleReviewCard({ src, name }: { src: string; name: string }) {
+  return (
+    <div className="break-inside-avoid mb-5 bg-white overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+      <img
+        src={src}
+        alt={`Avaliação de ${name} no Google`}
+        className="w-full h-auto block"
+      />
+    </div>
+  );
+}
+
+function GoogleReviewsCarousel({ items }: { items: typeof MORE_GOOGLE_REVIEWS }) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  const scrollByCards = (dir: 1 | -1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
+  };
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollerRef}
+        className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((r) => (
+          <div
+            key={r.src}
+            className="snap-start shrink-0 w-[240px] sm:w-[280px] bg-white overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+          >
+            <img
+              src={r.src}
+              alt={`Avaliação de ${r.name} no Google`}
+              className="w-full h-auto block"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 flex justify-center gap-3">
+        <button
+          onClick={() => scrollByCards(-1)}
+          aria-label="Anterior"
+          className="w-10 h-10 flex items-center justify-center border border-white/15 text-white hover:border-[#FF4D1C] hover:text-[#FF4D1C] transition-colors cursor-pointer"
+        >
+          ‹
+        </button>
+        <button
+          onClick={() => scrollByCards(1)}
+          aria-label="Siguiente"
+          className="w-10 h-10 flex items-center justify-center border border-white/15 text-white hover:border-[#FF4D1C] hover:text-[#FF4D1C] transition-colors cursor-pointer"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function GoogleReviewsSection() {
+  return (
+    <section className="relative bg-[#0D0D0D] px-6 py-24 overflow-hidden">
+      <Watermark n="06" />
+
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <ChapterBar n="06" />
+        <Label>Prueba social</Label>
+
+        <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight tracking-wide">
+          Lo dice <span className="text-[#FF4D1C]">Google.</span>
+        </h2>
+
+        <div className="mt-8">
+          <GoogleRatingBadge />
+        </div>
+
+        <div className="mt-12 columns-1 sm:columns-2 lg:columns-3 gap-5">
+          {FEATURED_GOOGLE_REVIEWS.map((r) => (
+            <GoogleReviewCard key={r.src} {...r} />
+          ))}
+        </div>
+
+        <div className="mt-16">
+          <p className="text-[#444444] text-sm font-[family-name:var(--font-inter)] uppercase tracking-[0.2em] mb-6">
+            Más opiniones
+          </p>
+          <GoogleReviewsCarousel items={MORE_GOOGLE_REVIEWS} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Seção 8 — CTA Final ───────────────────────────────────────────────────────
 
 function FinalCTASection({ onCTA }: { onCTA: () => void }) {
   return (
     <section className="relative bg-[#0D0D0D] px-6 py-24 overflow-hidden">
-      <Watermark n="07" />
+      <Watermark n="08" />
 
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#FF4D1C]/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
-        <ChapterBar n="07" />
+        <ChapterBar n="08" />
         <Label>Últimos lugares</Label>
 
         <h2 className="mt-6 font-[family-name:var(--font-bebas-neue)] text-[clamp(3.5rem,9vw,8rem)] leading-none tracking-wide">
@@ -891,13 +1306,14 @@ export default function LandingPage() {
   return (
     <main className="bg-[#0D0D0D] text-white">
       <CountdownBar onCTA={open} />
+      <StickyHeader onCTA={open} />
       <HeroSection onCTA={open} />
-      <UrgencyBar onCTA={open} />
+      <TestimonialsSection onCTA={open} />
       <PainSection onCTA={open} />
       <AboutSection onCTA={open} />
       <CurriculumSection onCTA={open} />
+      <GoogleReviewsSection />
       <ForWhoSection onCTA={open} />
-      <TestimonialsSection />
       <FinalCTASection onCTA={open} />
 
       <footer className="bg-[#0D0D0D] border-t border-white/5 py-8 text-center">
