@@ -5,7 +5,7 @@
  */
 
 var SHEET_NAME = "Leads"; // nome da aba da planilha
-var HEADERS = [
+var DEFAULT_HEADERS = [
   "id",
   "name",
   "email",
@@ -27,7 +27,19 @@ function doPost(e) {
     SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
+    sheet.appendRow(DEFAULT_HEADERS);
+  }
+
+  // Sempre lê o cabeçalho real da planilha (linha 1), em vez de presumir uma
+  // ordem fixa de colunas — assim o script nunca desalinha dados mesmo que
+  // alguém reordene ou adicione colunas manualmente na planilha.
+  var headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getValues()[0];
+
+  var idCol = headers.indexOf("id");
+  if (idCol === -1) {
+    throw new Error('Cabeçalho "id" não encontrado na linha 1 da planilha.');
   }
 
   var data = JSON.parse(e.postData.contents);
@@ -35,7 +47,7 @@ function doPost(e) {
 
   var rowIndex = -1;
   for (var i = 1; i < values.length; i++) {
-    if (values[i][0] === data.id) {
+    if (values[i][idCol] === data.id) {
       rowIndex = i + 1; // linhas do Sheets começam em 1
       break;
     }
@@ -47,7 +59,7 @@ function doPost(e) {
   var timeStr = Utilities.formatDate(now, tz, "HH:mm:ss");
 
   if (rowIndex === -1) {
-    var row = HEADERS.map(function (h) {
+    var row = headers.map(function (h) {
       if (h === "data") return dateStr;
       if (h === "hora") return timeStr;
       if (h === "qualificado") return "";
@@ -55,7 +67,7 @@ function doPost(e) {
     });
     sheet.appendRow(row);
   } else {
-    HEADERS.forEach(function (h, colIdx) {
+    headers.forEach(function (h, colIdx) {
       // nunca sobrescreve data/hora (mantém o primeiro toque) nem qualificado (preenchimento manual)
       if (h === "data" || h === "hora" || h === "qualificado") return;
       if (data[h] !== undefined && data[h] !== "") {
@@ -73,18 +85,21 @@ function doPost(e) {
  * COMO CONFIGURAR
  *
  * 1. Crie (ou abra) a planilha do Google Sheets e renomeie a primeira aba para "Leads".
- * 2. Vá em Extensões > Apps Script.
- * 3. Apague o conteúdo padrão do arquivo Code.gs e cole este arquivo inteiro (só o código, sem este comentário se preferir).
- * 4. Clique em Implantar > Nova implantação.
+ * 2. Na linha 1, garanta que existam as colunas (na ordem que preferir):
+ *    id, name, email, phone, data, hora, qualificado, utm_source, utm_campaign,
+ *    utm_medium, utm_content, utm_term, fbclid
+ * 3. Vá em Extensões > Apps Script.
+ * 4. Apague o conteúdo padrão do arquivo Code.gs e cole este arquivo inteiro (só o código, sem este comentário se preferir).
+ * 5. Clique em Implantar > Nova implantação.
  *    - Tipo: "Web App" (Aplicativo da Web)
  *    - Executar como: "Eu" (sua conta)
  *    - Quem pode acessar: "Qualquer pessoa"
- * 5. Autorize as permissões pedidas (é a sua própria planilha, é seguro).
- * 6. Copie a URL do Web App gerada (termina em /exec).
- * 7. No projeto Next.js, defina a variável de ambiente:
+ * 6. Autorize as permissões pedidas (é a sua própria planilha, é seguro).
+ * 7. Copie a URL do Web App gerada (termina em /exec).
+ * 8. No projeto Next.js, defina a variável de ambiente:
  *      GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/XXXXXXXX/exec
  *    - Em desenvolvimento: crie um arquivo .env.local na raiz do projeto com essa linha.
  *    - Em produção (Vercel): adicione essa env var nas configurações do projeto.
- * 8. Sempre que o código do Apps Script for alterado, é preciso criar uma
+ * 9. Sempre que o código do Apps Script for alterado, é preciso criar uma
  *    "Nova implantação" (ou gerenciar implantações > editar > nova versão) para as mudanças valerem.
  */

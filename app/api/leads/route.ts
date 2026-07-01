@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO: replace with real WhatsApp group link
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/XXXXXXXXXXXXX";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/DXzdsYjrxssEic8uivCxYi";
 
 const SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
