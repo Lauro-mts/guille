@@ -2,10 +2,34 @@
 
 import { useEffect, useRef, useState } from "react";
 
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
 interface LeadModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+interface UtmParams {
+  utm_source: string;
+  utm_campaign: string;
+  utm_medium: string;
+  utm_content: string;
+  utm_term: string;
+  fbclid: string;
+}
+
+const EMPTY_UTM: UtmParams = {
+  utm_source: "",
+  utm_campaign: "",
+  utm_medium: "",
+  utm_content: "",
+  utm_term: "",
+  fbclid: "",
+};
 
 export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
   const [name, setName] = useState("");
@@ -13,6 +37,34 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const nameRef = useRef<HTMLInputElement>(null);
+  const [leadId] = useState(() => crypto.randomUUID());
+  const utmRef = useRef<UtmParams>(EMPTY_UTM);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    utmRef.current = {
+      utm_source: params.get("utm_source") || "",
+      utm_campaign: params.get("utm_campaign") || "",
+      utm_medium: params.get("utm_medium") || "",
+      utm_content: params.get("utm_content") || "",
+      utm_term: params.get("utm_term") || "",
+      fbclid: params.get("fbclid") || "",
+    };
+  }, []);
+
+  const sendPartial = (field: "name" | "phone", value: string) => {
+    if (!value.trim()) return;
+    fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: leadId,
+        partial: true,
+        [field]: value.trim(),
+        ...utmRef.current,
+      }),
+    }).catch(() => {});
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -52,10 +104,17 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), whatsapp: whatsapp.trim() }),
+        body: JSON.stringify({
+          id: leadId,
+          name: name.trim(),
+          phone: whatsapp.trim(),
+          ...utmRef.current,
+        }),
       });
 
       if (!res.ok) throw new Error("Error al enviar");
+
+      window.fbq?.("track", "Lead");
 
       const { redirectUrl } = await res.json();
       window.location.href = redirectUrl;
@@ -114,6 +173,7 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onBlur={(e) => sendPartial("name", e.target.value)}
                 placeholder="Tu nombre"
                 className="bg-[#1A1A1A] border border-white/10 text-white placeholder-[#555555] px-4 py-3 focus:outline-none focus:border-[#FF4D1C] transition-colors font-[family-name:var(--font-inter)]"
               />
@@ -127,6 +187,7 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
                 type="tel"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
+                onBlur={(e) => sendPartial("phone", e.target.value)}
                 placeholder="+598 99 000 000"
                 className="bg-[#1A1A1A] border border-white/10 text-white placeholder-[#555555] px-4 py-3 focus:outline-none focus:border-[#FF4D1C] transition-colors font-[family-name:var(--font-inter)]"
               />
