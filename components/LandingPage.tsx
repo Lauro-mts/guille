@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import LeadModal from "./LeadModal";
 
 // ── Editar antes de publicar ──────────────────────────────────────────────────
-const SALARY_PLACEHOLDER = "$500";
+const SALARY_PLACEHOLDER = "200 a 800 USD";
 const DATE_PLACEHOLDER = "14/07";
 // TODO: substituir pela data real de abertura da oferta (UTC-3 = Montevideo)
 const PROMO_DATE = new Date("2026-07-15T20:00:00-03:00");
@@ -62,7 +62,7 @@ function CountdownBar({ onCTA }: { onCTA: () => void }) {
 
         {/* Label */}
         <span className="hidden sm:block text-[#555555] text-[10px] font-bold uppercase tracking-[0.3em] font-[family-name:var(--font-inter)] whitespace-nowrap">
-          A oferta abre em
+          La oferta abre el
         </span>
 
         {/* Timer — null enquanto hidrata no client */}
@@ -417,7 +417,7 @@ function PainSection({ onCTA }: { onCTA: () => void }) {
             {/* Ponte — fica junto ao texto no desktop */}
             <div className="mt-10 border-l-4 border-[#FF4D1C] bg-[#111111] p-8">
               <p className="text-white text-lg font-[family-name:var(--font-inter)] leading-relaxed">
-                Guille salió de Montevideo con una coctelera y llegó a Miami.
+                Guille salió de Maldonado con una coctelera y llegó a Miami.
               </p>
               <p className="mt-2 text-white text-xl font-bold font-[family-name:var(--font-inter)]">
                 No por suerte. Por método.
@@ -451,7 +451,7 @@ function PainSection({ onCTA }: { onCTA: () => void }) {
                   Miami
                 </p>
                 <p className="mt-0.5 text-xs font-bold uppercase tracking-[0.18em] text-white/80 font-[family-name:var(--font-inter)]">
-                  Bar Service
+                  Bar Service - East Hotel
                 </p>
               </div>
             </div>
@@ -569,7 +569,7 @@ function AboutSection({ onCTA }: { onCTA: () => void }) {
             src="/images/instructor-main.webp"
             alt="Guille Cardozo — retrato de autoridade, braços cruzados"
             label="Guille Cardozo"
-            sublabel="Instructor"
+            sublabel="Instructor - IBA Trainer"
             imgClassName="h-[340px]"
           />
         </div>
@@ -583,7 +583,7 @@ function AboutSection({ onCTA }: { onCTA: () => void }) {
               src="/images/instructor-main.webp"
               alt="Guille Cardozo — retrato de autoridade, braços cruzados"
               label="Guille Cardozo"
-              sublabel="Instructor"
+              sublabel="Instructor - IBA Trainer"
               className="flex-1 min-h-[300px]"
               imgClassName="h-full"
             />
@@ -613,7 +613,7 @@ function AboutSection({ onCTA }: { onCTA: () => void }) {
             </h3>
 
             <p className="mt-6 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
-              Salió de Montevideo con una coctelera y llegó a Miami.
+              Salió de Maldonado con una coctelera y llegó a Miami.
             </p>
             <p className="mt-3 text-[#999999] text-lg font-[family-name:var(--font-inter)] leading-relaxed">
               En el camino: hotel 5 estrellas, crucero por el Mediterráneo, y
@@ -791,11 +791,13 @@ function ForWhoSection({ onCTA }: { onCTA: () => void }) {
     "Soñás con trabajar fuera de Uruguay algún día",
     "Sos comunicativo, responsable y querés ser tomado en serio",
     "Estás dispuesto a aprender de la manera correcta, con método",
+    "Querés irte de viaje con los gastos cubiertos y ganar dinero por hacer lo que te gusta",
   ];
   const noItems = [
     "Creés que ser bartender es sobre tomar alcohol",
     "Querés un atajo sin esfuerzo",
-    "No estás comprometido con la profesión",
+    "No te interesa la profesión",
+    "Solo te importa ganar dinero",
   ];
 
   return (
@@ -886,14 +888,14 @@ const VIDEO_TESTIMONIALS = [
   },
   {
     ytId: "uYz4Q7RreJ8",
-    name: "",
+    name: "Erica Segovia",
     city: "",
     role: "",
     quote: "",
   },
   {
     ytId: "wus3yCmY4Bk",
-    name: "",
+    name: "Catalina Cherre",
     city: "",
     role: "",
     quote: "",
