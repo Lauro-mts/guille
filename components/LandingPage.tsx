@@ -62,7 +62,7 @@ function CountdownBar({ onCTA }: { onCTA: () => void }) {
 
         {/* Label */}
         <span className="hidden sm:block text-[#555555] text-[10px] font-bold uppercase tracking-[0.3em] font-[family-name:var(--font-inter)] whitespace-nowrap">
-          La oferta abre el
+          La oferta abre en
         </span>
 
         {/* Timer — null enquanto hidrata no client */}
@@ -686,23 +686,33 @@ function CurriculumSection({ onCTA }: { onCTA: () => void }) {
   const pillars = [
     {
       n: "01",
-      title: "Técnica de tragos y cócteles",
-      desc: "Desde lo básico hasta el nivel profesional — los clásicos que todo bartender necesita dominar.",
+      title: "Historia y técnica de cócteles",
+      desc: "Teoría y práctica. Desde lo básico hasta el nivel profesional — los clásicos que todo bartender necesita dominar.",
     },
     {
       n: "02",
-      title: "Postura y atención profesional",
-      desc: "Cómo comportarse detrás de una barra — lo que separa al buen bartender del memorable.",
+      title: "Actitud y atención profesional",
+      desc: "Cómo moverse detrás de una barra — lo que separa al buen bartender del memorable.",
     },
     {
       n: "03",
-      title: "Cómo conseguir tu primer trabajo",
-      desc: "CV, entrevista, dónde buscar — el camino real para entrar al mercado.",
+      title: "Cómo conseguir tu primera contratación",
+      desc: "Integra una Bolsa de Trabajo REAL. CV, entrevista, dónde buscar — el camino real para entrar al mercado.",
     },
     {
       n: "04",
-      title: "Cómo trabajar en el exterior",
+      title: "Despega tu carrera en el exterior",
       desc: "Cruceros, resorts internacionales, bares fuera de Uruguay — Guille ya pasó por todo eso.",
+    },
+    {
+      n: "05",
+      title: "Todo incluído en nuestras aulas",
+      desc: "No tendrás que comprar nada extra, pues Guille te facilitará bebidas e insumos para tu práctica - además de un libro original con más de 40 páginas.",
+    },
+    {
+      n: "06",
+      title: "Integra una comunidad en crecimiento",
+      desc: "Comparte con otros profesionales como tú y entérate de clases maestras, nuevas capacitaciones y oportunidades laborales.",
     },
   ];
 
@@ -712,12 +722,12 @@ function CurriculumSection({ onCTA }: { onCTA: () => void }) {
 
       <div className="relative z-10 max-w-5xl mx-auto">
         <ChapterBar n="05" />
-        <Label>El programa</Label>
+        <Label>Bartender TodoTerreno</Label>
 
         <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(3rem,8vw,7rem)] leading-none tracking-wide">
-          Qué incluye
+          Más que un curso,
           <br />
-          <span className="text-[#FF4D1C]">el curso</span>
+          <span className="text-[#FF4D1C]">un Programa completo</span>
         </h2>
 
 
@@ -881,7 +891,7 @@ function ForWhoSection({ onCTA }: { onCTA: () => void }) {
 const VIDEO_TESTIMONIALS = [
   {
     ytId: "HDNd8j3sdiY",
-    name: "",
+    name: "Julieta I., Franco S., Avril Martinez, Marcos Rodriguez y Catalina Cherre",
     city: "",
     role: "",
     quote: "",
@@ -1178,10 +1188,10 @@ function GoogleReviewsSection() {
 
       <div className="relative z-10 max-w-6xl mx-auto">
         <ChapterBar n="06" />
-        <Label>Prueba social</Label>
+        <Label>Lo dicen sus alumnos</Label>
 
         <h2 className="mt-4 font-[family-name:var(--font-bebas-neue)] text-[clamp(2.5rem,6vw,5rem)] leading-tight tracking-wide">
-          Lo dice <span className="text-[#FF4D1C]">Google.</span>
+          Aparece en <span className="text-[#FF4D1C]">Google.</span>
         </h2>
 
         <div className="mt-8">
