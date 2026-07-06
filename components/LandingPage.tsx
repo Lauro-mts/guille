@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import LeadModal from "./LeadModal";
 
 // ── Editar antes de publicar ──────────────────────────────────────────────────
-const SALARY_PLACEHOLDER = "200 a 800 USD";
+const SALARY_PLACEHOLDER = "500 USD";
 const DATE_PLACEHOLDER = "14/07";
 // TODO: substituir pela data real de abertura da oferta (UTC-3 = Montevideo)
 const PROMO_DATE = new Date("2026-07-15T20:00:00-03:00");
