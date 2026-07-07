@@ -170,7 +170,7 @@ export default function LeadModal({ isOpen, onClose }: LeadModalProps) {
           </h2>
           <p className="text-[#999999] text-sm font-[family-name:var(--font-inter)] mb-8 leading-relaxed">
             Completá el formulario y recibí el link del grupo en tu WhatsApp.
-            El día <span className="text-[#FF4D1C]">DD/MM</span> recibís la
+            El día <span className="text-[#FF4D1C]">14/07</span> recibís la
             oferta antes que nadie.
           </p>
 

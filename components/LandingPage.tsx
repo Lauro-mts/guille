@@ -253,14 +253,17 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
       <Watermark n="01" />
 
       {/* Conteúdo */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center md:items-start text-center md:text-left pt-[32svh] min-[380px]:pt-[38svh] md:pt-0 pb-8 md:pb-0">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 flex flex-col items-center md:items-start text-center md:text-left pt-[26svh] min-[380px]:pt-[30svh] md:pt-0 pb-6 md:pb-0">
 
         <Label>Curso de Bartender — Guille Cardozo | Punta del Este</Label>
 
         <h1 className="mt-3 font-[family-name:var(--font-bebas-neue)] text-[clamp(42px,13vw,64px)] md:text-[clamp(2.4rem,9vh,9rem)] leading-[0.9] md:leading-[0.88] tracking-wide max-w-5xl">
           <span
             className="block text-transparent"
-            style={{ WebkitTextStroke: "clamp(1px, 0.15vh, 2px) #FF4D1C" }}
+            style={{
+              WebkitTextStroke: "clamp(1px, 0.15vh, 2px) #FF4D1C",
+              textShadow: "0 2px 6px rgba(0,0,0,0.6)",
+            }}
           >
             {SALARY_PLACEHOLDER} por fin
           </span>
@@ -270,7 +273,7 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
         </h1>
 
         {/* Divisor */}
-        <div className="mt-4 md:mt-[clamp(0.75rem,2vh,2.5rem)] flex items-center gap-4 w-full max-w-sm">
+        <div className="mt-2 md:mt-[clamp(0.75rem,2vh,2.5rem)] flex items-center gap-4 w-full max-w-sm">
           <div className="flex-1 h-px bg-[#FF4D1C]/50" />
           <span className="text-[#FF4D1C] text-[10px] font-bold tracking-[0.35em] font-[family-name:var(--font-inter)] uppercase">
             Grupo exclusivo
@@ -279,7 +282,7 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
         </div>
 
         {/* Subtítulo */}
-        <p className="mt-3 md:mt-[clamp(0.75rem,2vh,1.75rem)] text-[#999999] text-[clamp(0.85rem,3.5vw,1rem)] md:text-[clamp(0.85rem,1.8vh,1.1rem)] max-w-lg font-[family-name:var(--font-inter)] leading-relaxed">
+        <p className="mt-1 md:mt-[clamp(0.75rem,2vh,1.75rem)] text-[#999999] text-[clamp(0.85rem,3.5vw,1rem)] md:text-[clamp(0.85rem,1.8vh,1.1rem)] max-w-lg font-[family-name:var(--font-inter)] leading-relaxed">
           Únete al grupo. El día{" "}
           <span className="text-white font-semibold">
             <PH>{DATE_PLACEHOLDER}</PH>
@@ -289,9 +292,9 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
         </p>
 
         {/* CTA — full-width no mobile */}
-        <div className="mt-5 md:mt-[clamp(1rem,2.5vh,2.5rem)] w-full max-w-[448px] md:w-auto">
+        <div className="mt-3 md:mt-[clamp(1rem,2.5vh,2.5rem)] w-full max-w-[448px] md:w-auto">
           <CTAButton onClick={onCTA} className="w-full md:w-auto">
-            Quiero unirme al grupo →
+            Quiero unirme al grupo
           </CTAButton>
         </div>
       </div>
