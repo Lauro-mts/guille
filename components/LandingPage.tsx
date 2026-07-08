@@ -1280,22 +1280,19 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
 
 // ── Página ────────────────────────────────────────────────────────────────────
 
-export default function LandingPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const open = () => setModalOpen(true);
-  const close = () => setModalOpen(false);
-
+// Conteúdo compartilhado entre a versão com popup e a versão de redirecionamento direto.
+export function LandingPageContent({ onCTA }: { onCTA: () => void }) {
   return (
     <main className="bg-[#0D0D0D] text-white">
-      <CountdownBar onCTA={open} />
-      <HeroSection onCTA={open} />
-      <TestimonialsSection onCTA={open} />
-      <PainSection onCTA={open} />
-      <AboutSection onCTA={open} />
-      <CurriculumSection onCTA={open} />
+      <CountdownBar onCTA={onCTA} />
+      <HeroSection onCTA={onCTA} />
+      <TestimonialsSection onCTA={onCTA} />
+      <PainSection onCTA={onCTA} />
+      <AboutSection onCTA={onCTA} />
+      <CurriculumSection onCTA={onCTA} />
       <GoogleReviewsSection />
-      <ForWhoSection onCTA={open} />
-      <FinalCTASection onCTA={open} />
+      <ForWhoSection onCTA={onCTA} />
+      <FinalCTASection onCTA={onCTA} />
 
       <footer className="bg-[#0D0D0D] border-t border-white/5 py-8 text-center">
         <p className="text-[#333333] text-sm font-[family-name:var(--font-inter)]">
@@ -1303,8 +1300,19 @@ export default function LandingPage() {
           Profesional, Punta del Este.
         </p>
       </footer>
-
-      <LeadModal isOpen={modalOpen} onClose={close} />
     </main>
+  );
+}
+
+export default function LandingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const open = () => setModalOpen(true);
+  const close = () => setModalOpen(false);
+
+  return (
+    <>
+      <LandingPageContent onCTA={open} />
+      <LeadModal isOpen={modalOpen} onClose={close} />
+    </>
   );
 }
