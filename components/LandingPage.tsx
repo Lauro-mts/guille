@@ -1280,6 +1280,16 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
 
 // ── Página ────────────────────────────────────────────────────────────────────
 
+// Apenas a primeira dobra (countdown + hero) — usada na versão enxuta de redirecionamento direto.
+export function HeroOnlyContent({ onCTA }: { onCTA: () => void }) {
+  return (
+    <main className="bg-[#0D0D0D] text-white">
+      <CountdownBar onCTA={onCTA} />
+      <HeroSection onCTA={onCTA} />
+    </main>
+  );
+}
+
 // Conteúdo compartilhado entre a versão com popup e a versão de redirecionamento direto.
 export function LandingPageContent({ onCTA }: { onCTA: () => void }) {
   return (
