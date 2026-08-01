@@ -5,9 +5,9 @@ import LeadModal from "./LeadModal";
 
 // ── Editar antes de publicar ──────────────────────────────────────────────────
 const SALARY_PLACEHOLDER = "500 USD";
-const DATE_PLACEHOLDER = "14/07";
+const DATE_PLACEHOLDER = "10/08";
 // TODO: substituir pela data real de abertura da oferta (UTC-3 = Montevideo)
-const PROMO_DATE = new Date("2026-07-15T20:00:00-03:00");
+const PROMO_DATE = new Date("2026-08-11T20:00:00-03:00");
 
 // ── Countdown ─────────────────────────────────────────────────────────────────
 
@@ -283,7 +283,11 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
 
         {/* Subtítulo */}
         <p className="mt-1 md:mt-[clamp(0.75rem,2vh,1.75rem)] text-[#999999] text-[clamp(0.85rem,3.5vw,1rem)] md:text-[clamp(0.85rem,1.8vh,1.1rem)] max-w-lg font-[family-name:var(--font-inter)] leading-relaxed">
-          Únete al grupo — con condiciones exclusivas para
+          Únete al grupo. El día{" "}
+          <span className="text-white font-semibold">
+            <PH>{DATE_PLACEHOLDER}</PH>
+          </span>{" "}
+          recibís la oferta antes que nadie — con condiciones exclusivas para
           quienes llegaron primero.
         </p>
 
