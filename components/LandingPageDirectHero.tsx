@@ -2,7 +2,7 @@
 
 import { HeroOnlyContent } from "./LandingPage";
 
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/JMaJ9JEyXCFHosYt2ap7Ju";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/Ep3XCCK6oj40Gbq5AxPgiL";
 
 declare global {
   interface Window {

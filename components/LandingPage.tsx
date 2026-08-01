@@ -283,11 +283,7 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
 
         {/* Subtítulo */}
         <p className="mt-1 md:mt-[clamp(0.75rem,2vh,1.75rem)] text-[#999999] text-[clamp(0.85rem,3.5vw,1rem)] md:text-[clamp(0.85rem,1.8vh,1.1rem)] max-w-lg font-[family-name:var(--font-inter)] leading-relaxed">
-          Únete al grupo. El día{" "}
-          <span className="text-white font-semibold">
-            <PH>{DATE_PLACEHOLDER}</PH>
-          </span>{" "}
-          recibís la oferta antes que nadie — con condiciones exclusivas para
+          Únete al grupo — con condiciones exclusivas para
           quienes llegaron primero.
         </p>
 
