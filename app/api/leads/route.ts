@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/Ep3XCCK6oj40Gbq5AxPgiL";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/KTveEyiCuzjIqEqeBhr3K7?s=sh&p=i&mlu=4";
 
 const SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 

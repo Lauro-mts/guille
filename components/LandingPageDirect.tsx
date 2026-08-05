@@ -2,7 +2,7 @@
 
 import { LandingPageContent } from "./LandingPage";
 
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/Ep3XCCK6oj40Gbq5AxPgiL";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/KTveEyiCuzjIqEqeBhr3K7?s=sh&p=i&mlu=4";
 
 declare global {
   interface Window {
